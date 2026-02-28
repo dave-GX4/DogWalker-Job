@@ -8,8 +8,11 @@ data class RegistreUiState(
     val registerPassword: String = "",
     val registerConfirmation: String = "",
     val description: String = "",
+    val experience: String = "",
     val isTermsAcceptedUser: Boolean = false,
     val isTermsAcceptedJob: Boolean = false,
+    val inService: Boolean = true,
+    val backgroundCheck: Boolean = false,
 
     // Errores de Registro (validaciones estrictas)
     val registerNameError: String? = null,

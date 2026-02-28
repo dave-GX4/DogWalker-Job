@@ -51,6 +51,8 @@ fun RegistrePage(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val experienceOptions = viewModel.experienceOptions
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -148,10 +150,18 @@ fun RegistrePage(
                     2 -> Step2(
                         description = uiState.description,
                         descriptionError = uiState.descriptionError,
-                        onDescriptionChange = viewModel::onDescriptionChanged,
                         isTermsAccepted = uiState.isTermsAcceptedJob,
+                        inService = uiState.inService,
+                        backgroundCheck = uiState.backgroundCheck,
+                        experience = uiState.experience,
+                        experienceOptions = experienceOptions,
+
+                        onDescriptionChange = viewModel::onDescriptionChanged,
                         onTermsAcceptedChange = viewModel::onTermsAcceptedJobChanged,
-                        onNext = { currentStep = 3 },
+                        onInServiceChange = viewModel::onInServiceChanged,
+                        onBackgroundCheckChange = viewModel::onBackgroundCheckChanged,
+                        onExperienceChange = viewModel::onExperienceChanged,
+                        onNext = { currentStep = 3 }
                     )
                     3 -> Step3(onFinish = { /* TODO: Enviar a API */ })
                 }

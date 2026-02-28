@@ -16,6 +16,8 @@ class RegistreViewModel @Inject constructor(
 ): ViewModel() {
     private val _uiState = MutableStateFlow(RegistreUiState())
     val uiState = _uiState.asStateFlow()
+    private val _experienceOptions = listOf("Menos de 1 año", "1-3 años", "3-5 años", "Más de 5 años")
+    val experienceOptions = _experienceOptions
 
     //validaciones de SingUp
     fun onRegisterNameChanged(name: String) {
@@ -132,6 +134,18 @@ class RegistreViewModel @Inject constructor(
                 descriptionError = error
             )
         }
+    }
+
+    fun onInServiceChanged(isActive: Boolean) {
+        _uiState.update { it.copy(inService = isActive) }
+    }
+
+    fun onBackgroundCheckChanged(isAuthorized: Boolean) {
+        _uiState.update { it.copy(backgroundCheck = isAuthorized) }
+    }
+
+    fun onExperienceChanged(experience: String) {
+        _uiState.update { it.copy(experience = experience) }
     }
 
     fun onAuthentication() {
