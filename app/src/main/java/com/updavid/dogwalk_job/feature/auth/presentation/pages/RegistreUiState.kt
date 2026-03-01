@@ -9,6 +9,8 @@ data class RegistreUiState(
     val registerConfirmation: String = "",
     val description: String = "",
     val experience: String = "",
+    val selectedType: String = "",
+    val selectedService: String = "",
     val isTermsAcceptedUser: Boolean = false,
     val isTermsAcceptedJob: Boolean = false,
     val inService: Boolean = true,

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +58,6 @@ fun RegistrePage(
             .background(BackgroundLight)
             .systemBarsPadding()
     ) {
-        // --- TOP BAR ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,10 +74,9 @@ fun RegistrePage(
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.width(48.dp)) // Balancear el título
+            Spacer(modifier = Modifier.width(48.dp))
         }
 
-        // --- PROGRESS BAR ---
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -108,7 +105,6 @@ fun RegistrePage(
             )
         }
 
-        // --- CONTENT FORM ---
         AnimatedContent(
             targetState = currentStep,
             label = "StepAnimation",
@@ -163,7 +159,18 @@ fun RegistrePage(
                         onExperienceChange = viewModel::onExperienceChanged,
                         onNext = { currentStep = 3 }
                     )
-                    3 -> Step3(onFinish = { /* TODO: Enviar a API */ })
+                    3 -> Step3(
+                        selectedType = uiState.selectedType,
+                        selectedService = uiState.selectedService,
+
+                        serviceTypesMap = viewModel.serviceTypesMap,
+                        requiresCertificateList = viewModel.requiresCertificateList,
+
+                        onServiceTypeChange = viewModel::onServiceTypeChanged,
+                        onServiceChange = viewModel::onServiceChanged,
+
+                        onFinish = viewModel::onAuthentication
+                    )
                 }
             }
         }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -135,16 +137,14 @@ fun Step1(
             primaryColor = Color.Yellow
         )
 
-        OutlinedButton(
+        Button(
             onClick = onNext,
             enabled = isFormValid,
-            modifier = Modifier.fillMaxWidth().height(60.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if(isFormValid) MaterialTheme.colorScheme.primary else Color.Gray,
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.Black),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Siguiente", fontWeight = FontWeight.Bold)
+            Text("Siguiente", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }

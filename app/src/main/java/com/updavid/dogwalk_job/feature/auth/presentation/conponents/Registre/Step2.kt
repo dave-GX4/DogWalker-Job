@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.updavid.dogwalk_job.core.atoms.DropdownSelector
 import com.updavid.dogwalk_job.core.atoms.SwitchCard
 import com.updavid.dogwalk_job.core.atoms.TermsCheckbox
 import com.updavid.dogwalk_job.core.atoms.TextFieldComponent
@@ -91,33 +88,13 @@ fun Step2(
             max = 4
         )
 
-        ExposedDropdownMenuBox(
-            expanded = experienceExpanded,
-            onExpandedChange = { experienceExpanded = !experienceExpanded }
-        ) {
-            OutlinedTextField(
-                value = experience,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Nivel de Experiencia") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = experienceExpanded) },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
-            )
-            ExposedDropdownMenu(
-                expanded = experienceExpanded,
-                onDismissRequest = { experienceExpanded = false }
-            ) {
-                experienceOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            onExperienceChange(option)
-                            experienceExpanded = false
-                        }
-                    )
-                }
-            }
-        }
+        DropdownSelector(
+            value = experience,
+            label = "Nivel de Experiencia",
+            options = experienceOptions,
+            onValueChange = onExperienceChange,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         SwitchCard(
             title = "En Servicio",

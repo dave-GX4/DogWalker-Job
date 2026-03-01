@@ -19,6 +19,26 @@ class RegistreViewModel @Inject constructor(
     private val _experienceOptions = listOf("Menos de 1 año", "1-3 años", "3-5 años", "Más de 5 años")
     val experienceOptions = _experienceOptions
 
+    private val _serviceTypesMap = mapOf(
+        "Movilidad & Ejercicio" to listOf("Paseo de perros", "Running con perros", "Transporte de mascotas", "Aventura outdoor"),
+        "Cuidado en Hogar" to listOf("Cuidado en casa del dueño", "Cuidado en casa del cuidador", "Visitas a domicilio", "Compañía para mascota anciana"),
+        "Higiene & Estética" to listOf("Baño básico a domicilio", "Grooming completo", "Spa y bienestar", "Limpieza dental"),
+        "Entrenamiento & Comportamiento" to listOf("Entrenamiento básico", "Entrenamiento avanzado", "Modificación de conducta", "Socialización guiada", "Entrenamiento para cachorros"),
+        "Salud & Bienestar" to listOf("Visita al veterinario", "Fisioterapia canina", "Alimentación especializada"),
+        "Extras" to listOf("Fotografía de mascotas", "Cumpleaños/eventos para mascotas", "Entrega de alimentos/suministros")
+    )
+
+    val serviceTypesMap = _serviceTypesMap
+
+    private val _requiresCertificateList = listOf(
+        "Transporte de mascotas", "Cuidado en casa del cuidador", "Compañía para mascota anciana",
+        "Grooming completo", "Spa y bienestar", "Limpieza dental", "Entrenamiento avanzado",
+        "Modificación de conducta", "Socialización guiada", "Visita al veterinario",
+        "Fisioterapia canina", "Alimentación especializada", "Entrega de alimentos/suministros"
+    )
+
+    val requiresCertificateList = _requiresCertificateList
+
     //validaciones de SingUp
     fun onRegisterNameChanged(name: String) {
         val hasUpperCase = name.any { it.isUpperCase() }
@@ -146,6 +166,19 @@ class RegistreViewModel @Inject constructor(
 
     fun onExperienceChanged(experience: String) {
         _uiState.update { it.copy(experience = experience) }
+    }
+
+    fun onServiceTypeChanged(type: String) {
+        _uiState.update {
+            it.copy(
+                selectedType = type,
+                selectedService = ""
+            )
+        }
+    }
+
+    fun onServiceChanged(service: String) {
+        _uiState.update { it.copy(selectedService = service) }
     }
 
     fun onAuthentication() {
