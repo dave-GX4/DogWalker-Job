@@ -1,6 +1,8 @@
-package com.updavid.dogwalk_job.feature.auth.presentation.pages
+package com.updavid.dogwalk_job.feature.auth.presentation.screens
 
 data class RegistreUiState(
+    val isLoading: Boolean = false,
+
     val registerName: String = "",
     val registerEmail: String = "",
     val registerPhone: String = "",

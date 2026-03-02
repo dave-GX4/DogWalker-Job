@@ -2,12 +2,18 @@ package com.updavid.dogwalk_job.feature.auth.presentation.viewmodel
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import com.updavid.dogwalk_job.feature.auth.presentation.pages.RegistreUiState
+import androidx.lifecycle.viewModelScope
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.RegistreUiState
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.UiEvents
+import com.updavid.dogwalk_user.feature.auth.domain.entitie.WorkerRegistration
 import com.updavid.dogwalk_user.feature.auth.domain.usecases.PostSingUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +33,6 @@ class RegistreViewModel @Inject constructor(
         "Salud & Bienestar" to listOf("Visita al veterinario", "Fisioterapia canina", "Alimentación especializada"),
         "Extras" to listOf("Fotografía de mascotas", "Cumpleaños/eventos para mascotas", "Entrega de alimentos/suministros")
     )
-
     val serviceTypesMap = _serviceTypesMap
 
     private val _requiresCertificateList = listOf(
@@ -36,8 +41,10 @@ class RegistreViewModel @Inject constructor(
         "Modificación de conducta", "Socialización guiada", "Visita al veterinario",
         "Fisioterapia canina", "Alimentación especializada", "Entrega de alimentos/suministros"
     )
-
     val requiresCertificateList = _requiresCertificateList
+
+    private val _eventChannel = Channel< UiEvents>()
+    val events = _eventChannel.receiveAsFlow()
 
     //validaciones de SingUp
     fun onRegisterNameChanged(name: String) {
@@ -183,9 +190,46 @@ class RegistreViewModel @Inject constructor(
 
     fun onAuthentication() {
         val state = _uiState.value
-        // Verificar que no haya errores antes de enviar
-        if (state.registerNameError != null || state.registerEmailError != null || state.registerPasswordError != null) return
+        if (state.registerNameError != null || state.registerEmailError != null ||
+            state.registerPasswordError != null || state.descriptionError != null ||
+            state.experience.isEmpty() || state.selectedService.isEmpty()) {
+            return
+        }
 
-        println("API REGISTER: ${state.registerEmail}")
+        _uiState.update { it.copy(isLoading = true) }
+
+        viewModelScope.launch {
+            val workerData = WorkerRegistration(
+                name = state.registerName,
+                email = state.registerEmail,
+                phone = state.registerPhone,
+                address = state.registerAddress,
+                password = state.registerPassword,
+
+                description = state.description,
+                experience = state.experience,
+                inService = state.inService,
+                backgroundCheck = state.backgroundCheck,
+
+                serviceCategory = state.selectedType,
+                specificService = state.selectedService
+            )
+            val result = postSingUpUseCase(workerData)
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            result.onSuccess {
+                println("REGISTRO EXITOSO EN BASE DE DATOS")
+                // Limpiar valores de estado de la ui
+                _uiState.value = RegistreUiState()
+
+                _eventChannel.send(UiEvents.NavigateToMap)
+
+            }.onFailure { exception ->
+                println("ERROR AL REGISTRAR: ${exception.message}")
+                val errorMsg = exception.message ?: "Error de conexión"
+                _eventChannel.send(UiEvents.ShowError(errorMsg))
+            }
+        }
     }
 }

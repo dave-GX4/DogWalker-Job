@@ -8,8 +8,8 @@ import com.updavid.dogwalk_job.core.navigation.Auth
 import com.updavid.dogwalk_job.core.navigation.FeatureNavGraph
 import com.updavid.dogwalk_job.core.navigation.Maps
 import com.updavid.dogwalk_job.core.navigation.Registre
-import com.updavid.dogwalk_job.feature.auth.presentation.pages.AuthPage
-import com.updavid.dogwalk_job.feature.auth.presentation.pages.RegistrePage
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.AuthPage
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.RegistrePage
 import com.updavid.dogwalk_job.feature.auth.presentation.viewmodel.RegistreViewModel
 import com.updavid.dogwalk_user.feature.auth.presentation.viewmodel.AuthViewModel
 import javax.inject.Inject
@@ -31,7 +31,14 @@ class AuthNavGraph @Inject constructor(): FeatureNavGraph{
 
             RegistrePage(
                 viewModel = viewModel,
-                onBack = { navController.navigateUp() }
+                onBack = {
+                    navController.navigateUp()
+                },
+                onLoginSuccess = {
+                    navController.navigate(Auth) {
+                        popUpTo<Registre> { inclusive = true }
+                    }
+                }
             )
         }
     }

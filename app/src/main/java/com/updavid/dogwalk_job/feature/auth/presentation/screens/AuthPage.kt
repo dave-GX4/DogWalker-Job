@@ -1,4 +1,4 @@
-package com.updavid.dogwalk_job.feature.auth.presentation.pages
+package com.updavid.dogwalk_job.feature.auth.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

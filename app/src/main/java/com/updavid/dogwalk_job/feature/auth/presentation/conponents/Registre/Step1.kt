@@ -55,6 +55,7 @@ fun Step1(
             && password.isNotBlank() && usernameError == null
             && emailError == null && phoneError == null
             && addressError == null && passwordError == null
+            && isTermsAccepted
 
     val yellowTermsText = buildAnnotatedString {
         withStyle(SpanStyle(color = Color(0xFF4A5568))) {

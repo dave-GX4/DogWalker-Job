@@ -49,8 +49,6 @@ fun Step2(
 
     onNext: () -> Unit
 ) {
-    var experienceExpanded by remember { mutableStateOf(false) }
-
     val isFormValid = description.isNotEmpty() && descriptionError == null && isTermsAccepted && experience.isNotEmpty()
 
     val greenTermsText = buildAnnotatedString {

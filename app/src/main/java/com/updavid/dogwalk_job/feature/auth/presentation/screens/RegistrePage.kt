@@ -1,5 +1,6 @@
-package com.updavid.dogwalk_job.feature.auth.presentation.pages
+package com.updavid.dogwalk_job.feature.auth.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +21,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,20 +46,35 @@ import com.updavid.dogwalk_job.feature.auth.presentation.viewmodel.RegistreViewM
 @Composable
 fun RegistrePage(
     viewModel: RegistreViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onLoginSuccess: () -> Unit
 ){
-    val PrimaryGreen = Color(0xFF13EC5B)
-    val BackgroundLight = Color(0xFFF6F8F6)
+    val localContext = LocalContext.current
     var currentStep by remember { mutableIntStateOf(1) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val experienceOptions = viewModel.experienceOptions
+    val serviceTypesMap = viewModel.serviceTypesMap
+    val requiresCertificateList = viewModel.requiresCertificateList
+
+    LaunchedEffect(key1 = true) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is UiEvents.NavigateToMap -> {
+                    onLoginSuccess()
+                }
+                is UiEvents.ShowError -> {
+                    Toast.makeText(localContext, "⚠️ ${event.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
     ) {
         Row(
@@ -64,7 +83,15 @@ fun RegistrePage(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { if (currentStep > 1) currentStep-- }) {
+            IconButton(
+                onClick = {
+                    if (currentStep > 1) {
+                        currentStep--
+                    } else {
+                        onBack()
+                    }
+                }
+            ) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
             Text(
@@ -100,8 +127,8 @@ fun RegistrePage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),
-                color = PrimaryGreen,
-                trackColor = PrimaryGreen.copy(alpha = 0.2f)
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             )
         }
 
@@ -163,8 +190,8 @@ fun RegistrePage(
                         selectedType = uiState.selectedType,
                         selectedService = uiState.selectedService,
 
-                        serviceTypesMap = viewModel.serviceTypesMap,
-                        requiresCertificateList = viewModel.requiresCertificateList,
+                        serviceTypesMap = serviceTypesMap,
+                        requiresCertificateList = requiresCertificateList,
 
                         onServiceTypeChange = viewModel::onServiceTypeChanged,
                         onServiceChange = viewModel::onServiceChanged,
