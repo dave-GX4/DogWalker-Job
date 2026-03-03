@@ -219,15 +219,14 @@ class RegistreViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
 
             result.onSuccess {
-                println("REGISTRO EXITOSO EN BASE DE DATOS")
-                // Limpiar valores de estado de la ui
+                println("REGISTRO EXITOSO")
                 _uiState.value = RegistreUiState()
-
                 _eventChannel.send(UiEvents.NavigateToMap)
 
             }.onFailure { exception ->
-                println("ERROR AL REGISTRAR: ${exception.message}")
-                val errorMsg = exception.message ?: "Error de conexión"
+                val errorMsg = exception.message ?: "Ocurrió un error inesperado"
+                println("ERROR AL REGISTRAR: $errorMsg")
+
                 _eventChannel.send(UiEvents.ShowError(errorMsg))
             }
         }

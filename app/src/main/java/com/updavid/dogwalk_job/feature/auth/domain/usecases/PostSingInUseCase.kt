@@ -1,24 +1,26 @@
 package com.updavid.dogwalk_user.feature.auth.domain.usecases
 
-import com.updavid.dogwalk_user.feature.auth.domain.entitie.Auth
+import com.updavid.dogwalk_user.feature.auth.domain.entitie.Response
 import com.updavid.dogwalk_user.feature.auth.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class PostSingInUseCase @Inject constructor(
     private val repository: AuthRepository
 ){
-    suspend operator fun invoke(email: String, password: String): Result<Auth> {
+    private val validStatuses = listOf(200, 201, 202, 203)
+
+    suspend operator fun invoke(email: String, password: String): Result<Response> {
         return try {
-            if (email.isBlank() || password.isBlank()) {
-                return Result.failure(Exception("El correo y la contraseña no pueden estar vacíos"))
+            val response = repository.postSingIn(email, password)
+
+            if (response.status in validStatuses){
+                Result.success(response)
+            } else {
+                Result.failure(Exception(response.message))
             }
 
-            val authResponse = repository.postSingIn(email, password)
-
-            Result.success(authResponse)
-
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Error de conexión. Por favor, revisa tu internet."))
         }
     }
 }

@@ -3,7 +3,7 @@ package com.updavid.dogwalk_user.feature.auth.data.repositoryImpl
 import android.util.Log
 import com.updavid.dogwalk_user.feature.auth.data.datasource.remote.api.DogWalkApi
 import com.updavid.dogwalk_user.feature.auth.data.datasource.remote.mapper.toDomain
-import com.updavid.dogwalk_user.feature.auth.domain.entitie.Auth
+import com.updavid.dogwalk_user.feature.auth.domain.entitie.Response
 import com.updavid.dogwalk_user.feature.auth.domain.entitie.WorkerRegistration
 import com.updavid.dogwalk_user.feature.auth.domain.repository.AuthRepository
 import com.updavid.liveoci.features.singinup.data.datasource.remote.models.request.JobDTO
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val api: DogWalkApi
 ): AuthRepository{
-    override suspend fun postSingIn(email: String, password: String): Auth {
+    override suspend fun postSingIn(email: String, password: String): Response {
         val requestBody = LoginRequestDTO(
             email = email,
             password = password
@@ -28,7 +28,7 @@ class AuthRepositoryImpl @Inject constructor(
         return responseDto.toDomain()
     }
 
-    override suspend fun postSingUp(workerData: WorkerRegistration): Auth {
+    override suspend fun postSingUp(workerData: WorkerRegistration): Response {
         // Construimos el JSON (DTO) a partir de la entidad
         val requestBody = RegisterWorkerRequestDTO(
             name = workerData.name,

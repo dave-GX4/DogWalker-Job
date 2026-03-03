@@ -1,6 +1,8 @@
 package com.updavid.dogwalk_user.feature.auth.presentation.pages
 
 data class AuthUiState(
+    val isLoading: Boolean = false,
+
     val loginEmail: String = "",
     val loginPassword: String = "",
     // Errores de Login

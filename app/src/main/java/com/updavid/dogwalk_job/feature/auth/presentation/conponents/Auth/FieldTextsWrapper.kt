@@ -6,13 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,10 @@ fun FieldTextsWrapper(
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit
 ) {
+
+    val isFormValid = email.isNotBlank() && password.isNotBlank()
+            && emailError == null && passwordError == null
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -60,15 +66,14 @@ fun FieldTextsWrapper(
                 .padding(vertical = 4.dp)
         )
 
-        OutlinedButton(
+        Button(
             onClick = onLoginClick,
-            modifier = Modifier.fillMaxWidth().height(60.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onBackground
-            )
+            enabled = isFormValid,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.Black),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Iniciar Sesión", fontWeight = FontWeight.Bold)
+            Text("Finalizar Registro", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }

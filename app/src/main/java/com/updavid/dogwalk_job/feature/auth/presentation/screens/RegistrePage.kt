@@ -65,7 +65,7 @@ fun RegistrePage(
                     onLoginSuccess()
                 }
                 is UiEvents.ShowError -> {
-                    Toast.makeText(localContext, "⚠️ ${event.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(localContext, " Se encontro un problema: ${event.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }

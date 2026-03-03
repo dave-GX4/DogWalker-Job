@@ -2,12 +2,18 @@ package com.updavid.dogwalk_user.feature.auth.presentation.viewmodel
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.RegistreUiState
+import com.updavid.dogwalk_job.feature.auth.presentation.screens.UiEvents
 import com.updavid.dogwalk_user.feature.auth.domain.usecases.PostSingInUseCase
 import com.updavid.dogwalk_user.feature.auth.presentation.pages.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,6 +22,9 @@ class AuthViewModel @Inject constructor(
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _eventChannel = Channel<UiEvents>()
+    val events = _eventChannel.receiveAsFlow()
 
     fun onLoginEmailChanged(email: String) {
         val isValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -42,11 +51,32 @@ class AuthViewModel @Inject constructor(
 
     fun onAuthentication() {
         val state = _uiState.value
-        // Validar campos vacíos antes de enviar a API
+
         if(state.loginEmail.isBlank() || state.loginPassword.isBlank()){
             _uiState.update { it.copy(loginEmailError = "Requerido", loginPasswordError = "Requerido") }
             return
         }
-        println("API LOGIN: ${state.loginEmail}")
+
+        _uiState.update { it.copy(isLoading = true) }
+
+        viewModelScope.launch {
+            val email = state.loginEmail
+            val password = state.loginPassword
+
+            val result = postSingInUseCase(email, password)
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            result.onSuccess {
+                println("REGISTRO EXITOSO")
+                _uiState.value = AuthUiState()
+                _eventChannel.send(UiEvents.NavigateToMap)
+            }.onFailure { exception ->
+                val errorMsg = exception.message ?: "Ocurrió un error inesperado"
+                println("ERROR AL REGISTRAR: $errorMsg")
+
+                _eventChannel.send(UiEvents.ShowError(errorMsg))
+            }
+        }
     }
 }
